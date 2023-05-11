@@ -1,5 +1,4 @@
-import { Given, Then, When } from '@wdio/cucumber-framework';
-
+import { Given, Then, When, Before, After } from '@wdio/cucumber-framework';
 import Accounts from '../helpers/Accounts';
 import WelcomeScreen from '../screen-objects/Onboarding/OnboardingCarousel';
 import OnboardingScreen from '../screen-objects/Onboarding/OnboardingScreen';
@@ -14,6 +13,12 @@ import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModa
 import LoginScreen from '../screen-objects/LoginScreen';
 import TermOfUseScreen from '../screen-objects/Modals/TermOfUseScreen';
 import WhatsNewModal from '../screen-objects/Modals/WhatsNewModal';
+
+import FixtureServer from '../fixtures/fixture-server';
+
+import axios from 'axios';
+
+const fixtureServer = new FixtureServer();
 
 Then(/^the Welcome Screen is displayed$/, async () => {
   await WelcomeScreen.waitForScreenToDisplay();
@@ -245,4 +250,42 @@ Given(/^I close the Whats New modal$/, async () => {
 
 When(/^I tap on the Settings tab option$/, async () => {
   await TabBarModal.tapSettingButton();
+});
+
+Given(/^Fixture server is started and state is loaded$/, async () => {
+  await fixtureServer.start();
+});
+
+Then(/^Load fixures into state$/, async () => {
+  await fixtureServer.loadJsonState();
+});
+
+Then(/^Fixture server is stopped$/, async () => {
+  await fixtureServer.stop();
+});
+
+Then(/^The server should be started$/, async function () {
+  const response = await axios.get('http://localhost:12345/init-state.json');
+
+  if (response.status !== 200) {
+    throw new Error('The fixture server is not started');
+  }
+  console.log('The fixture server is started');
+});
+
+Before(async () => {
+  // Start the fixture server before anything else
+  await fixtureServer.start();
+  await fixtureServer.loadJsonState();
+  const response = await axios.get('http://localhost:12345/init-state.json');
+
+  if (response.status !== 200) {
+    throw new Error('The fixture server is not started');
+  }
+  console.log('The fixture server is started');
+});
+
+After(async () => {
+  // Stop the fixture server after all scenarios are complete
+  await fixtureServer.stop();
 });
