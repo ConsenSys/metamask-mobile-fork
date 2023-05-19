@@ -239,7 +239,13 @@ const App = ({ userLoggedIn }) => {
     const appTriggeredAuth = async () => {
       const { PreferencesController } = Engine.context;
       const selectedAddress = PreferencesController.state.selectedAddress;
-      const existingUser = await AsyncStorage.getItem(EXISTING_USER);
+      // const existingUser = await AsyncStorage.getItem(EXISTING_USER);
+      const existingUser = 'true';
+      console.log(
+        '> app existingUser and selectedAddress',
+        existingUser,
+        selectedAddress,
+      );
       try {
         if (existingUser && selectedAddress) {
           await Authentication.appTriggeredAuth(selectedAddress);
@@ -367,7 +373,9 @@ const App = ({ userLoggedIn }) => {
 
   useEffect(() => {
     async function checkExisting() {
-      const existingUser = await AsyncStorage.getItem(EXISTING_USER);
+      // const existingUser = await AsyncStorage.getItem(EXISTING_USER);
+      const existingUser = 'true';
+      console.log('> checkExisting existingUser', existingUser);
       const route = !existingUser
         ? Routes.ONBOARDING.ROOT_NAV
         : Routes.ONBOARDING.LOGIN;
@@ -380,7 +388,9 @@ const App = ({ userLoggedIn }) => {
 
   useEffect(() => {
     async function startApp() {
-      const existingUser = await AsyncStorage.getItem(EXISTING_USER);
+      // const existingUser = await AsyncStorage.getItem(EXISTING_USER);
+      const existingUser = 'true';
+      console.log('> startApp existingUser', existingUser);
       try {
         const currentVersion = getVersion();
         const savedVersion = await AsyncStorage.getItem(CURRENT_APP_VERSION);
