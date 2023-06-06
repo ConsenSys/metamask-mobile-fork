@@ -13,13 +13,13 @@ import SettingsView from './pages/Drawer/Settings/SettingsView';
 import WalletView from './pages/WalletView';
 import WhatsNewModal from './pages/modals/WhatsNewModal';
 import Accounts from '../wdio/helpers/Accounts';
-import initState from '../wdio/fixtures/init-state.json';
 
 import TestHelpers from './helpers';
 
 import TermsOfUseModal from './pages/modals/TermsOfUseModal';
 import TabBarComponent from './pages/TabBarComponent';
 import FixtureServer from '../wdio/fixtures/fixture-server';
+import FixtureBuilder from '../wdio/fixtures/fixture-builder';
 import axios from 'axios';
 
 const fixtureServer = new FixtureServer();
@@ -118,8 +118,9 @@ export const switchToGoreliNetwork = async () => {
 // Start the fixture server
 export const startFixtureServer = async () => {
   try {
+    const state = new FixtureBuilder().build();
     await fixtureServer.start();
-    await FixtureServer.loadJsonState(initState);
+    await FixtureServer.loadJsonState(state);
   } catch (err) {
     console.log('fixture server errors: ', err);
   }
