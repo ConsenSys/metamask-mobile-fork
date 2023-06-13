@@ -269,21 +269,17 @@ class DeeplinkManager {
             }
             return true;
           } else if (action === ACTIONS.WC && wcURL) {
-            try {
-              WC2Manager.getInstance()
-                .then((instance) =>
-                  instance.connect({
-                    wcUri: wcURL,
-                    origin,
-                    redirectUrl: params?.redirect,
-                  }),
-                )
-                .catch((err) => {
-                  console.warn(`DeepLinkManager failed to connect`, err);
-                });
-            } catch (error) {
-              console.warn(error);
-            }
+            WC2Manager.getInstance()
+              .then((instance) =>
+                instance.connect({
+                  wcUri: wcURL,
+                  origin,
+                  redirectUrl: params?.redirect,
+                }),
+              )
+              .catch((err) => {
+                console.warn(`DeepLinkManager failed to connect`, err);
+              });
             return;
           } else if (action === ACTIONS.WC) {
             // This is called from WC just to open the app and it's not supposed to do anything
@@ -334,21 +330,17 @@ class DeeplinkManager {
       case PROTOCOLS.WC:
         handled();
 
-        try {
-          WC2Manager.getInstance()
-            .then((instance) =>
-              instance.connect({
-                wcUri: wcURL,
-                origin,
-                redirectUrl: params?.redirect,
-              }),
-            )
-            .catch((err) => {
-              console.warn(`DeepLinkManager failed to connect`, err);
-            });
-        } catch (error) {
-          console.warn(error);
-        }
+        WC2Manager.getInstance()
+          .then((instance) =>
+            instance.connect({
+              wcUri: wcURL,
+              origin,
+              redirectUrl: params?.redirect,
+            }),
+          )
+          .catch((err) => {
+            console.warn(`DeepLinkManager failed to connect`, err);
+          });
 
         break;
 
@@ -413,21 +405,17 @@ class DeeplinkManager {
             url.replace(`${PREFIXES.METAMASK}${ACTIONS.WC}`, `${ACTIONS.WC}`);
           }
 
-          try {
-            WC2Manager.getInstance()
-              .then((instance) =>
-                instance.connect({
-                  wcUri: fixedUrl,
-                  origin,
-                  redirectUrl: params?.redirect,
-                }),
-              )
-              .catch((err) => {
-                console.warn(`DeepLinkManager failed to connect`, err);
-              });
-          } catch (error) {
-            console.warn(error);
-          }
+          WC2Manager.getInstance()
+            .then((instance) =>
+              instance.connect({
+                wcUri: fixedUrl,
+                origin,
+                redirectUrl: params?.redirect,
+              }),
+            )
+            .catch((err) => {
+              console.warn(`DeepLinkManager failed to connect`, err);
+            });
         } else if (
           url.startsWith(`${PREFIXES.METAMASK}${ACTIONS.BUY_CRYPTO}`)
         ) {
