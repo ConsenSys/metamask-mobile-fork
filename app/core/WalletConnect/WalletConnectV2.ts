@@ -45,6 +45,10 @@ if (Platform.OS === 'android') {
   });
 }
 
+const { PROJECT_ID } = AppConstants.WALLET_CONNECT;
+export const isWC2Enabled =
+  typeof PROJECT_ID === 'string' && PROJECT_ID?.length > 0;
+
 const ERROR_MESSAGES = {
   INVALID_CHAIN: 'Invalid chainId',
   MANUAL_DISCONNECT: 'Manual disconnect',
@@ -358,12 +362,16 @@ export class WC2Manager {
 
     let core;
     try {
-      core = new Core({
-        projectId: AppConstants.WALLET_CONNECT.PROJECT_ID,
-        // logger: 'debug',
-      });
+      if (typeof PROJECT_ID === 'string') {
+        core = new Core({
+          projectId: PROJECT_ID,
+          // logger: 'debug',
+        });
+      } else {
+        throw new Error('WC2::init Init Missing projectId');
+      }
     } catch (err) {
-      console.warn(`WC2::init Init failed due to missing key: ${err}`);
+      console.warn(`WC2::init Init failed due to ${err}`);
     }
 
     let web3Wallet;
