@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import { ethers } from 'ethers';
 import abi from 'human-standard-token-abi';
-import { ethErrors } from 'eth-json-rpc-errors';
+import { ethErrors, serializeError } from 'eth-json-rpc-errors';
 
 import Approval from '../../Views/Approval';
 import NotificationManager from '../../../core/NotificationManager';
@@ -93,25 +93,7 @@ const RootRPCMethodsUI = (props) => {
     Dapp: 'dapp',
   };
 
-  // Reject pending approval using MetaMask SDK.
-  const rejectPendingApproval = (id, error) => {
-    const { ApprovalController } = Engine.context;
-    try {
-      ApprovalController.reject(id, error);
-    } catch (error) {
-      Logger.error(error, 'Reject while rejecting pending connection request');
-    }
-  };
-
-  // Accept pending approval using MetaMask SDK.
-  const acceptPendingApproval = (id, requestData) => {
-    const { ApprovalController } = Engine.context;
-    try {
-      ApprovalController.accept(id, requestData);
-    } catch (err) {
-      // Ignore err if request already approved or doesn't exists.
-    }
-  };
+  const { resolvePendingApproval, rejectPendingApproval } = Engine;
 
   const showPendingApprovalModal = ({ type, origin }) => {
     InteractionManager.runAfterInteractions(() => {
@@ -394,7 +376,7 @@ const RootRPCMethodsUI = (props) => {
 
   const onWalletConnectSessionApproval = () => {
     setShowPendingApproval(false);
-    acceptPendingApproval(
+    resolvePendingApproval(
       walletConnectRequestInfo.id,
       walletConnectRequestInfo.data,
     );
@@ -405,7 +387,7 @@ const RootRPCMethodsUI = (props) => {
     setShowPendingApproval(false);
     rejectPendingApproval(
       walletConnectRequestInfo.id,
-      ethErrors.provider.userRejectedRequest(),
+      serializeError(ethErrors.provider.userRejectedRequest()),
     );
     setWalletConnectRequestInfo(undefined);
   };
@@ -480,13 +462,13 @@ const RootRPCMethodsUI = (props) => {
     setShowPendingApproval(false);
     rejectPendingApproval(
       customNetworkToAdd.id,
-      ethErrors.provider.userRejectedRequest(),
+      serializeError(ethErrors.provider.userRejectedRequest()),
     );
   };
 
   const onAddCustomNetworkConfirm = () => {
     setShowPendingApproval(false);
-    acceptPendingApproval(customNetworkToAdd.id, customNetworkToAdd.data);
+    resolvePendingApproval(customNetworkToAdd.id, customNetworkToAdd.data);
   };
 
   /**
@@ -518,13 +500,16 @@ const RootRPCMethodsUI = (props) => {
     setShowPendingApproval(false);
     rejectPendingApproval(
       customNetworkToSwitch.id,
-      ethErrors.provider.userRejectedRequest(),
+      serializeError(ethErrors.provider.userRejectedRequest()),
     );
   };
 
   const onSwitchCustomNetworkConfirm = () => {
     setShowPendingApproval(false);
-    acceptPendingApproval(customNetworkToSwitch.id, customNetworkToSwitch.data);
+    resolvePendingApproval(
+      customNetworkToSwitch.id,
+      customNetworkToSwitch.data,
+    );
     props.networkSwitched({
       networkUrl: customNetworkToSwitch.data.rpcUrl,
       networkStatus: true,
@@ -565,7 +550,7 @@ const RootRPCMethodsUI = (props) => {
    */
   const onAccountsConfirm = () => {
     if (hostToApprove) {
-      acceptPendingApproval(hostToApprove.id, hostToApprove.requestData);
+      resolvePendingApproval(hostToApprove.id, hostToApprove.requestData);
     }
     setShowPendingApproval(false);
   };
@@ -608,7 +593,7 @@ const RootRPCMethodsUI = (props) => {
    * On confirming watching an asset
    */
   const onWatchAssetConfirm = () => {
-    acceptPendingApproval(watchAsset.id, watchAsset.data);
+    resolvePendingApproval(watchAsset.id, watchAsset.data);
     setShowPendingApproval(false);
     setWatchAsset(undefined);
   };
@@ -619,7 +604,7 @@ const RootRPCMethodsUI = (props) => {
   const onWatchAssetReject = () => {
     rejectPendingApproval(
       watchAsset.id,
-      ethErrors.provider.userRejectedRequest(),
+      serializeError(ethErrors.provider.userRejectedRequest()),
     );
     setShowPendingApproval(false);
     setWatchAsset(undefined);
@@ -659,6 +644,15 @@ const RootRPCMethodsUI = (props) => {
   };
 
   const onSign = () => {
+    resolvePendingApproval(signMessageParams.metamaskId);
+    setSignMessageParams(undefined);
+  };
+
+  const onCancel = () => {
+    rejectPendingApproval(
+      signMessageParams.metamaskId,
+      serializeError(ethErrors.provider.userRejectedRequest()),
+    );
     setSignMessageParams(undefined);
   };
 
@@ -667,6 +661,7 @@ const RootRPCMethodsUI = (props) => {
       messageParams={signMessageParams}
       approvalType={showPendingApproval?.type}
       onSign={onSign}
+      onCancel={onCancel}
     />
   );
 
