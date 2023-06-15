@@ -13,13 +13,9 @@ import OnboardingWizardModal from '../screen-objects/Modals/OnboardingWizardModa
 import LoginScreen from '../screen-objects/LoginScreen';
 import TermOfUseScreen from '../screen-objects/Modals/TermOfUseScreen';
 import WhatsNewModal from '../screen-objects/Modals/WhatsNewModal';
+import { loadFixture, startFixtureServer, stopFixtureServer } from '../fixtures/fixture-helper';
 
-import FixtureServer from '../fixtures/fixture-server';
 import FixtureBuilder from '../fixtures/fixture-builder';
-
-import axios from 'axios';
-
-const fixtureServer = new FixtureServer();
 
 Then(/^the Welcome Screen is displayed$/, async () => {
   await WelcomeScreen.waitForScreenToDisplay();
@@ -253,37 +249,15 @@ When(/^I tap on the Settings tab option$/, async () => {
   await TabBarModal.tapSettingButton();
 });
 
-Given(/^Fixture server is started and state is loaded$/, async () => {
-  await fixtureServer.start();
+Given(/^Fixture server is started$/, async () => {
+  await startFixtureServer();
 });
 
-Then(/^Load fixures into state$/, async () => {
-  await fixtureServer.loadJsonState();
+Then(/^Load fixtures into state to skip onboarding steps$/, async () => {
+  const state = new FixtureBuilder().build();
+  await loadFixture({fixture: state});
 });
 
 Then(/^Fixture server is stopped$/, async () => {
-  await fixtureServer.stop();
-});
-
-Before(async () => {
-  // Start the fixture server before anything else
-  try {
-    const state = new FixtureBuilder().build();
-    await fixtureServer.start();
-    await fixtureServer.loadJsonState(state);
-  } catch (err) {
-    console.log('fixture server errors: ', err);
-  }
-  const response = await axios.get('http://localhost:12345/init-state.json');
-
-  // Throws if state is not properly loaded
-  if (response.status !== 200) {
-    throw new Error('The fixture server is not started');
-  }
-  console.log('The fixture server is started');
-});
-
-After(async () => {
-  // Stop the fixture server after all scenarios are complete
-  await fixtureServer.stop();
+  await stopFixtureServer();
 });
