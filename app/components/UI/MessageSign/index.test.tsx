@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import { serializeError, ethErrors } from 'eth-rpc-errors';
 import MessageSign from './';
 import configureMockStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
@@ -12,12 +13,8 @@ import AppConstants from '../../../core/AppConstants';
 import { strings } from '../../../../locales/i18n';
 
 jest.mock('../../../core/Engine', () => ({
-  context: {
-    SignatureController: {
-      signMessage: jest.fn(),
-      cancelMessage: jest.fn(),
-    },
-  },
+  resolvePendingApproval: jest.fn(),
+  rejectPendingApproval: jest.fn(),
 }));
 
 jest.mock('../../../core/NotificationManager', () => ({
@@ -70,12 +67,10 @@ describe('MessageSign', () => {
       const wrapper = createWrapper().dive();
       await (wrapper.find(SignatureRequest).props() as any).onConfirm();
 
-      expect(
-        Engine.context.SignatureController.signMessage,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        Engine.context.SignatureController.signMessage,
-      ).toHaveBeenCalledWith(messageParamsMock);
+      expect(Engine.resolvePendingApproval).toHaveBeenCalledTimes(1);
+      expect(Engine.resolvePendingApproval).toHaveBeenCalledWith(
+        messageParamsMock.metamaskId,
+      );
     });
 
     it.each([
@@ -108,12 +103,11 @@ describe('MessageSign', () => {
       const wrapper = createWrapper().dive();
       await (wrapper.find(SignatureRequest).props() as any).onCancel();
 
-      expect(
-        Engine.context.SignatureController.cancelMessage,
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        Engine.context.SignatureController.cancelMessage,
-      ).toHaveBeenCalledWith(messageParamsMock.metamaskId);
+      expect(Engine.rejectPendingApproval).toHaveBeenCalledTimes(1);
+      expect(Engine.rejectPendingApproval).toHaveBeenCalledWith(
+        messageParamsMock.metamaskId,
+        serializeError(ethErrors.provider.userRejectedRequest()),
+      );
     });
 
     it.each([
