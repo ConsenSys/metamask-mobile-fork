@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import { ethers } from 'ethers';
 import abi from 'human-standard-token-abi';
-import { ethErrors, serializeError } from 'eth-json-rpc-errors';
 
 import Approval from '../../Views/Approval';
 import NotificationManager from '../../../core/NotificationManager';
@@ -387,7 +386,6 @@ const RootRPCMethodsUI = (props) => {
     setShowPendingApproval(false);
     rejectPendingApproval(
       walletConnectRequestInfo.id,
-      serializeError(ethErrors.provider.userRejectedRequest()),
     );
     setWalletConnectRequestInfo(undefined);
   };
@@ -462,7 +460,6 @@ const RootRPCMethodsUI = (props) => {
     setShowPendingApproval(false);
     rejectPendingApproval(
       customNetworkToAdd.id,
-      serializeError(ethErrors.provider.userRejectedRequest()),
     );
   };
 
@@ -500,7 +497,6 @@ const RootRPCMethodsUI = (props) => {
     setShowPendingApproval(false);
     rejectPendingApproval(
       customNetworkToSwitch.id,
-      serializeError(ethErrors.provider.userRejectedRequest()),
     );
   };
 
@@ -604,7 +600,6 @@ const RootRPCMethodsUI = (props) => {
   const onWatchAssetReject = () => {
     rejectPendingApproval(
       watchAsset.id,
-      serializeError(ethErrors.provider.userRejectedRequest()),
     );
     setShowPendingApproval(false);
     setWatchAsset(undefined);
@@ -651,7 +646,6 @@ const RootRPCMethodsUI = (props) => {
   const onSignReject = () => {
     rejectPendingApproval(
       signMessageParams.id,
-      serializeError(ethErrors.provider.userRejectedRequest()),
     );
     setSignMessageParams(undefined);
   };
