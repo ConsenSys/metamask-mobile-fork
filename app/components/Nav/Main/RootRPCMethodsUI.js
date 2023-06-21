@@ -644,13 +644,13 @@ const RootRPCMethodsUI = (props) => {
   };
 
   const onSignConfirm = () => {
-    resolvePendingApproval(signMessageParams.metamaskId);
+    resolvePendingApproval(signMessageParams.id);
     setSignMessageParams(undefined);
   };
 
   const onSignReject = () => {
     rejectPendingApproval(
-      signMessageParams.metamaskId,
+      signMessageParams.id,
       serializeError(ethErrors.provider.userRejectedRequest()),
     );
     setSignMessageParams(undefined);
@@ -658,7 +658,7 @@ const RootRPCMethodsUI = (props) => {
 
   const renderSigningModal = () => (
     <SignatureRequestRoot
-      messageParams={signMessageParams}
+      messageParams={signMessageParams.data}
       approvalType={showPendingApproval?.type}
       onSignConfirm={onSignConfirm}
       onSignReject={onSignReject}
@@ -743,7 +743,7 @@ const RootRPCMethodsUI = (props) => {
         case ApprovalTypes.ETH_SIGN:
         case ApprovalTypes.PERSONAL_SIGN:
         case ApprovalTypes.ETH_SIGN_TYPED_DATA:
-          setSignMessageParams(requestData);
+          setSignMessageParams({ data: requestData, id: request.id });
           showPendingApprovalModal({
             type: request.type,
             origin: request.origin,
