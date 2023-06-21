@@ -285,7 +285,7 @@ class ApproveTransactionReview extends PureComponent {
     fetchingUpdateDone: false,
     showBlockExplorerModal: false,
     address: '',
-    isCustomSpendInputValid: false,
+    isCustomSpendInputValid: true,
   };
 
   customSpendLimitInput = React.createRef();
@@ -653,7 +653,9 @@ class ApproveTransactionReview extends PureComponent {
   goToSpendCap = () => this.setState({ isReadyToApprove: false });
 
   customSpendInputValid = (value) => {
-    this.setState({ isCustomSpendInputValid: value });
+    if (this.state.token?.tokenStandard === ERC20) {
+      this.setState({ isCustomSpendInputValid: value });
+    }
   };
 
   renderDetails = () => {
