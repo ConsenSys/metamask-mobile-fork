@@ -384,9 +384,7 @@ const RootRPCMethodsUI = (props) => {
 
   const onWalletConnectSessionRejected = () => {
     setShowPendingApproval(false);
-    rejectPendingApproval(
-      walletConnectRequestInfo.id,
-    );
+    rejectPendingApproval(walletConnectRequestInfo.id);
     setWalletConnectRequestInfo(undefined);
   };
 
@@ -458,9 +456,7 @@ const RootRPCMethodsUI = (props) => {
 
   const onAddCustomNetworkReject = () => {
     setShowPendingApproval(false);
-    rejectPendingApproval(
-      customNetworkToAdd.id,
-    );
+    rejectPendingApproval(customNetworkToAdd.id);
   };
 
   const onAddCustomNetworkConfirm = () => {
@@ -495,9 +491,7 @@ const RootRPCMethodsUI = (props) => {
 
   const onSwitchCustomNetworkReject = () => {
     setShowPendingApproval(false);
-    rejectPendingApproval(
-      customNetworkToSwitch.id,
-    );
+    rejectPendingApproval(customNetworkToSwitch.id);
   };
 
   const onSwitchCustomNetworkConfirm = () => {
@@ -598,9 +592,7 @@ const RootRPCMethodsUI = (props) => {
    * On rejecting watching an asset
    */
   const onWatchAssetReject = () => {
-    rejectPendingApproval(
-      watchAsset.id,
-    );
+    rejectPendingApproval(watchAsset.id);
     setShowPendingApproval(false);
     setWatchAsset(undefined);
   };
@@ -638,21 +630,19 @@ const RootRPCMethodsUI = (props) => {
     );
   };
 
-  const onSignConfirm = () => {
-    resolvePendingApproval(signMessageParams.id);
+  const onSignConfirm = async () => {
+    await resolvePendingApproval(signMessageParams.id);
     setSignMessageParams(undefined);
   };
 
-  const onSignReject = () => {
-    rejectPendingApproval(
-      signMessageParams.id,
-    );
+  const onSignReject = async () => {
+    await rejectPendingApproval(signMessageParams.id);
     setSignMessageParams(undefined);
   };
 
   const renderSigningModal = () => (
     <SignatureRequestRoot
-      messageParams={signMessageParams.data}
+      messageParams={signMessageParams?.data}
       approvalType={showPendingApproval?.type}
       onSignConfirm={onSignConfirm}
       onSignReject={onSignReject}
