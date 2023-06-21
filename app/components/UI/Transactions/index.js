@@ -25,6 +25,7 @@ import NotificationManager from '../../../core/NotificationManager';
 import { collectibleContractsSelector } from '../../../reducers/collectibles';
 import {
   selectChainId,
+  selectProviderConfig,
   selectProviderType,
 } from '../../../selectors/networkController';
 import { baseStyles, fontStyles } from '../../../styles/common';
@@ -119,9 +120,9 @@ class Transactions extends PureComponent {
     */
     navigation: PropTypes.object,
     /**
-     * Object representing the selected network
+     * Object representing the configuration of the current selected network
      */
-    network: PropTypes.object,
+    providerConfig: PropTypes.object,
     /**
      * An array that represents the user collectible contracts
      */
@@ -229,9 +230,7 @@ class Transactions extends PureComponent {
 
   updateBlockExplorer = () => {
     const {
-      network: {
-        providerConfig: { type, rpcTarget },
-      },
+      providerConfig: { type, rpcTarget },
       frequentRpcList,
     } = this.props;
     let blockExplorer;
@@ -330,10 +329,7 @@ class Transactions extends PureComponent {
   viewOnBlockExplore = () => {
     const {
       navigation,
-      network: {
-        network,
-        providerConfig: { type },
-      },
+      providerConfig: { type },
       selectedAddress,
       close,
     } = this.props;
@@ -355,7 +351,7 @@ class Transactions extends PureComponent {
     } catch (e) {
       Logger.error(e, {
         message: `can't get a block explorer link for network `,
-        network,
+        type,
       });
     }
   };
@@ -366,9 +362,7 @@ class Transactions extends PureComponent {
 
     const {
       chainId,
-      network: {
-        providerConfig: { type },
-      },
+      providerConfig: { type },
     } = this.props;
     const blockExplorerText = () => {
       if (isMainnetByChainId(chainId) || type !== RPC) {
@@ -775,7 +769,7 @@ const mapStateToProps = (state) => ({
   thirdPartyApiMode: state.privacy.thirdPartyApiMode,
   frequentRpcList:
     state.engine.backgroundState.PreferencesController.frequentRpcList,
-  network: state.engine.backgroundState.NetworkController,
+  providerConfig: selectProviderConfig(state),
   gasFeeEstimates:
     state.engine.backgroundState.GasFeeController.gasFeeEstimates,
   primaryCurrency: state.settings.primaryCurrency,
