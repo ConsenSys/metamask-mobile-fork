@@ -652,10 +652,8 @@ class ApproveTransactionReview extends PureComponent {
 
   goToSpendCap = () => this.setState({ isReadyToApprove: false });
 
-  customSpendInputValid = (value) => {
-    if (this.state.token?.tokenStandard === ERC20) {
-      this.setState({ isCustomSpendInputValid: value });
-    }
+  handleSetIsCustomSpendInputValid = (value) => {
+    this.setState({ isCustomSpendInputValid: value });
   };
 
   renderDetails = () => {
@@ -729,20 +727,20 @@ class ApproveTransactionReview extends PureComponent {
       tokenName || tokenSymbol || strings(`spend_limit_edition.nft`)
     } (#${tokenValue})`;
 
-    const isFirstScreenERC20 = tokenStandard === ERC20 && !tokenSpendValue;
-
-    const isFinalScreenNonERC20 = isReadyToApprove || tokenStandard !== ERC20;
+    const isERC2OToken = tokenStandard === ERC20;
+    const isNonERC20Token = tokenStandard !== ERC20;
+    const isERC20SpendCapScreenWithoutValue = isERC2OToken && !tokenSpendValue;
 
     const shouldDisableConfirmButton =
       !fetchingUpdateDone ||
-      isFirstScreenERC20 ||
+      isERC20SpendCapScreenWithoutValue ||
       Boolean(gasError) ||
       transactionConfirmed ||
-      !isCustomSpendInputValid ||
-      (isFinalScreenNonERC20 && !isGasEstimateStatusIn);
+      (!isCustomSpendInputValid && isERC2OToken) ||
+      (isNonERC20Token && !isGasEstimateStatusIn);
 
     const confirmText =
-      tokenStandard === ERC20 && !isReadyToApprove
+      isERC2OToken && !isReadyToApprove
         ? strings('transaction.next')
         : strings('transactions.approve');
 
@@ -798,7 +796,7 @@ class ApproveTransactionReview extends PureComponent {
                       {strings('spend_limit_edition.token')}
                     </Text>
                   )}
-                  {tokenStandard === ERC20 && (
+                  {isERC2OToken && (
                     <>
                       {tokenImage ? (
                         <Avatar
@@ -859,7 +857,7 @@ class ApproveTransactionReview extends PureComponent {
                     {!tokenStandard ? (
                       <SkeletonText style={styles.skeletalView} />
                     ) : (
-                      tokenStandard === ERC20 && (
+                      isERC2OToken && (
                         <CustomSpendCap
                           ticker={tokenSymbol}
                           dappProposedValue={originalApproveAmount}
@@ -868,7 +866,7 @@ class ApproveTransactionReview extends PureComponent {
                           domain={host}
                           isEditDisabled={Boolean(isReadyToApprove)}
                           editValue={this.goToSpendCap}
-                          isInputValid={this.customSpendInputValid}
+                          isInputValid={this.handleSetIsCustomSpendInputValid}
                           onInputChanged={(value) =>
                             this.setState({
                               tokenSpendValue: value.replace(/[^0-9.]/g, ''),
@@ -877,7 +875,7 @@ class ApproveTransactionReview extends PureComponent {
                         />
                       )
                     )}
-                    {((tokenStandard === ERC20 && isReadyToApprove) ||
+                    {((isERC2OToken && isReadyToApprove) ||
                       tokenStandard === ERC721 ||
                       tokenStandard === ERC1155) && (
                       <View style={styles.transactionWrapper}>
