@@ -33,7 +33,7 @@ import getAllUrlParams from '../SDKConnect/utils/getAllUrlParams.util';
 import { waitForKeychainUnlocked } from '../SDKConnect/utils/wait.util';
 import WalletConnect from './WalletConnect';
 import parseWalletConnectUri from './wc-utils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '../../store/async-storage-wrapper';
 import METHODS_TO_REDIRECT from './wc-config';
 
 if (Platform.OS === 'android') {

@@ -26,7 +26,7 @@ import { GasFeeController } from '@metamask/gas-fee-controller';
 import { ApprovalController } from '@metamask/approval-controller';
 import { PermissionController } from '@metamask/permission-controller';
 import SwapsController, { swapsUtils } from '@metamask/swaps-controller';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '../store/async-storage-wrapper';
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring';
 import Encryptor from './Encryptor';
 import Networks, {
