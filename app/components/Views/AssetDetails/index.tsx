@@ -32,6 +32,10 @@ import { useTheme } from '../../../util/theme';
 import { MetaMetricsEvents } from '../../../core/Analytics';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import Routes from '../../../constants/navigation/Routes';
+import {
+  selectChainId,
+  selectProviderConfig,
+} from '../../../selectors/networkController';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -96,9 +100,8 @@ const AssetDetails = (props: Props) => {
   const styles = createStyles(colors);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const network = useSelector(
-    (state: any) => state.engine.backgroundState.NetworkController,
-  );
+  const providerConfig = useSelector(selectProviderConfig);
+  const chainId = useSelector(selectChainId);
   const tokens = useSelector(
     (state: any) =>
       state.engine.backgroundState.TokensController.tokens as TokenType[],
@@ -130,11 +133,11 @@ const AssetDetails = (props: Props) => {
 
   const getNetworkName = () => {
     let name = '';
-    if (network.providerConfig.nickname) {
-      name = network.providerConfig.nickname;
+    if (providerConfig.nickname) {
+      name = providerConfig.nickname;
     } else {
       name =
-        (Networks as any)[network.providerConfig.type]?.name ||
+        (Networks as any)[providerConfig.type]?.name ||
         { ...Networks.rpc, color: null }.name;
     }
     return name;
@@ -166,7 +169,7 @@ const AssetDetails = (props: Props) => {
   };
 
   const triggerHideToken = () => {
-    const { TokensController, NetworkController } = Engine.context as any;
+    const { TokensController } = Engine.context as any;
     navigation.navigate(Routes.MODAL.ROOT_MODAL_FLOW, {
       screen: 'AssetHideConfirmation',
       params: {
@@ -188,9 +191,7 @@ const AssetDetails = (props: Props) => {
                 token_standard: 'ERC20',
                 asset_type: 'token',
                 tokens: [`${symbol} - ${address}`],
-                chain_id: getDecimalChainId(
-                  NetworkController?.state?.providerConfig?.chainId,
-                ),
+                chain_id: getDecimalChainId(chainId),
               });
             } catch (err) {
               Logger.log(err, 'AssetDetails: Failed to hide token!');
