@@ -782,7 +782,7 @@ class Engine {
     this.controllerMessenger.clearSubscriptions();
   }
 
-  resolvePendingApproval = async (id, data) => {
+  acceptPendingApproval = async (id, data) => {
     const { ApprovalController } = this.context;
     try {
       await ApprovalController.accept(id, data);
@@ -900,8 +900,8 @@ export default {
     Object.freeze(instance);
     return instance;
   },
-  resolvePendingApproval(id) {
-    return instance.resolvePendingApproval(id);
+  acceptPendingApproval(id) {
+    return instance.acceptPendingApproval(id);
   },
   rejectPendingApproval(id) {
     return instance.rejectPendingApproval(id);

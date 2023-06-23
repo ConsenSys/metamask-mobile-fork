@@ -12,7 +12,7 @@ import AppConstants from '../../../core/AppConstants';
 import { strings } from '../../../../locales/i18n';
 
 jest.mock('../../../core/Engine', () => ({
-  resolvePendingApproval: jest.fn(),
+  acceptPendingApproval: jest.fn(),
   rejectPendingApproval: jest.fn(),
 }));
 
@@ -66,8 +66,8 @@ describe('MessageSign', () => {
       const wrapper = createWrapper().dive();
       await (wrapper.find(SignatureRequest).props() as any).onConfirm();
 
-      expect(Engine.resolvePendingApproval).toHaveBeenCalledTimes(1);
-      expect(Engine.resolvePendingApproval).toHaveBeenCalledWith(
+      expect(Engine.acceptPendingApproval).toHaveBeenCalledTimes(1);
+      expect(Engine.acceptPendingApproval).toHaveBeenCalledWith(
         messageParamsMock.metamaskId,
       );
     });

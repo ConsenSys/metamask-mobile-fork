@@ -98,7 +98,7 @@ const RootRPCMethodsUI = (props) => {
     Dapp: 'dapp',
   };
 
-  const { resolvePendingApproval, rejectPendingApproval } = Engine;
+  const { acceptPendingApproval, rejectPendingApproval } = Engine;
 
   const showPendingApprovalModal = ({ type, origin }) => {
     InteractionManager.runAfterInteractions(() => {
@@ -381,7 +381,7 @@ const RootRPCMethodsUI = (props) => {
 
   const onWalletConnectSessionApproval = () => {
     setShowPendingApproval(false);
-    resolvePendingApproval(
+    acceptPendingApproval(
       walletConnectRequestInfo.id,
       walletConnectRequestInfo.data,
     );
@@ -467,7 +467,7 @@ const RootRPCMethodsUI = (props) => {
 
   const onAddCustomNetworkConfirm = () => {
     setShowPendingApproval(false);
-    resolvePendingApproval(customNetworkToAdd.id, customNetworkToAdd.data);
+    acceptPendingApproval(customNetworkToAdd.id, customNetworkToAdd.data);
   };
 
   /**
@@ -502,10 +502,7 @@ const RootRPCMethodsUI = (props) => {
 
   const onSwitchCustomNetworkConfirm = () => {
     setShowPendingApproval(false);
-    resolvePendingApproval(
-      customNetworkToSwitch.id,
-      customNetworkToSwitch.data,
-    );
+    acceptPendingApproval(customNetworkToSwitch.id, customNetworkToSwitch.data);
     props.networkSwitched({
       networkUrl: customNetworkToSwitch.data.rpcUrl,
       networkStatus: true,
@@ -546,7 +543,7 @@ const RootRPCMethodsUI = (props) => {
    */
   const onAccountsConfirm = () => {
     if (hostToApprove) {
-      resolvePendingApproval(hostToApprove.id, hostToApprove.requestData);
+      acceptPendingApproval(hostToApprove.id, hostToApprove.requestData);
     }
     setShowPendingApproval(false);
   };
@@ -589,7 +586,7 @@ const RootRPCMethodsUI = (props) => {
    * On confirming watching an asset
    */
   const onWatchAssetConfirm = () => {
-    resolvePendingApproval(watchAsset.id, watchAsset.data);
+    acceptPendingApproval(watchAsset.id, watchAsset.data);
     setShowPendingApproval(false);
     setWatchAsset(undefined);
   };
@@ -637,7 +634,7 @@ const RootRPCMethodsUI = (props) => {
   };
 
   const onSignConfirm = async () => {
-    await resolvePendingApproval(signMessageParams.id);
+    await acceptPendingApproval(signMessageParams.id);
     setSignMessageParams(undefined);
   };
 
