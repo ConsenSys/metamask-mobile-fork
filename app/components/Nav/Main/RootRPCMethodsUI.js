@@ -59,6 +59,12 @@ import { createAccountConnectNavDetails } from '../../Views/AccountConnect';
 
 const hstInterface = new ethers.utils.Interface(abi);
 
+const APPROVAL_TYPES_WITH_DISABLED_CLOSE_ON_APPROVE = [
+  ApprovalTypes.ETH_SIGN,
+  ApprovalTypes.ETH_SIGN_TYPED_DATA,
+  ApprovalTypes.PERSONAL_SIGN,
+];
+
 const styles = StyleSheet.create({
   bottomModal: {
     justifyContent: 'flex-end',
@@ -750,7 +756,18 @@ const RootRPCMethodsUI = (props) => {
           break;
       }
     } else {
-      setShowPendingApproval(false);
+      setShowPendingApproval((showPendingApproval) => {
+        const currentApprovalType = showPendingApproval?.type;
+
+        const approvalTypeHasCloseOnApproveDisabled =
+          APPROVAL_TYPES_WITH_DISABLED_CLOSE_ON_APPROVE.includes(
+            currentApprovalType,
+          );
+
+        const shouldCloseModal = !approvalTypeHasCloseOnApproveDisabled;
+
+        return shouldCloseModal ? false : showPendingApproval;
+      });
     }
   };
 
