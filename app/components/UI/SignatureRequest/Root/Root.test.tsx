@@ -26,6 +26,11 @@ jest.mock('../../../../core/Engine', () => ({
       getAccountKeyringType: jest.fn(() => Promise.resolve({ data: {} })),
       getQRKeyringState: jest.fn(() => Promise.resolve({ data: {} })),
     },
+    SignatureController: {
+      hub: {
+        on: jest.fn(),
+      },
+    },
   },
 }));
 
