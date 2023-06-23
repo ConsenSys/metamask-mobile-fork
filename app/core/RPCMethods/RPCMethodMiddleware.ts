@@ -540,6 +540,9 @@ export const getRpcMethodMiddleware = ({
           },
           req,
           'V3',
+          {
+            parseJsonData: false,
+          },
         );
 
         res.result = rawSig;
@@ -580,6 +583,9 @@ export const getRpcMethodMiddleware = ({
           },
           req,
           'V4',
+          {
+            parseJsonData: false,
+          },
         );
 
         res.result = rawSig;
