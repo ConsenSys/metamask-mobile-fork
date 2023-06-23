@@ -14,6 +14,13 @@ import AppConstants from '../../../core/AppConstants';
 jest.mock('../../../core/Engine', () => ({
   acceptPendingApproval: jest.fn(),
   rejectPendingApproval: jest.fn(),
+  context: {
+    SignatureController: {
+      hub: {
+        on: jest.fn(),
+      },
+    },
+  },
 }));
 
 jest.mock('../../../core/NotificationManager', () => ({
