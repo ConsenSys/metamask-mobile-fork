@@ -26,6 +26,13 @@ const createStyles = (colors: any) =>
       paddingVertical: 8,
       color: colors.text.default,
     },
+    modalErrText: {
+      ...(fontStyles.normal as any),
+      fontSize: 14,
+      textAlign: 'center',
+      paddingVertical: 8,
+      color: colors.error.default,
+    },
     modalTitle: {
       ...(fontStyles.bold as any),
       fontSize: 22,
@@ -38,10 +45,10 @@ interface Props {
   retryIsOpen: boolean;
   onConfirmPress: () => void;
   onCancelPress: () => void;
-  errorMsg: string;
+  errorMsg: string | undefined;
 }
 
-const RetryModal = ({ retryIsOpen, onConfirmPress, onCancelPress }: Props) => {
+const RetryModal = ({ retryIsOpen, onConfirmPress, onCancelPress, errorMsg }: Props) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
@@ -59,9 +66,15 @@ const RetryModal = ({ retryIsOpen, onConfirmPress, onCancelPress }: Props) => {
         <Text style={styles.modalTitle}>
           {strings('transaction_update_retry_modal.title')}
         </Text>
-        <Text style={styles.modalText}>
-          {strings('transaction_update_retry_modal.text')}
-        </Text>
+        { errorMsg ? 
+          <Text style={styles.modalErrText}>
+             { errorMsg }
+          </Text>
+          :
+          <Text style={styles.modalText}>
+            { strings('transaction_update_retry_modal.text')}
+          </Text>
+        }   
       </View>
     </ActionModal>
   );
